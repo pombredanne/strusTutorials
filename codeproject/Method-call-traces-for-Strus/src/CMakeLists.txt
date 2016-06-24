@@ -20,21 +20,14 @@ link_directories(
 # ------------------------------------
 # LIBRARY
 # ------------------------------------
-add_library( modstrus_storage_example  MODULE  modstrus_storage_example.cpp positionWindow.cpp window_joinop.cpp minwin_weighting.cpp minwin_summarizer.cpp)
-set_target_properties( modstrus_storage_example PROPERTIES PREFIX "")
-target_link_libraries( modstrus_storage_example strus_module )
-
-# ------------------------------------
-# TESTS
-# ------------------------------------
-add_executable( testModStorageExample testModStorageExample.cpp positionWindow.cpp window_joinop.cpp minwin_weighting.cpp minwin_summarizer.cpp )
-target_link_libraries( testModStorageExample boost_system strus_base strus_error strus_storage ${Boost_LIBRARIES} )
-add_test( ModStorageExample ./testModStorageExample )
+add_library( modstrus_trace_example  MODULE  modstrus_trace_example.cpp )
+set_target_properties( modstrus_trace_example PROPERTIES PREFIX "")
+target_link_libraries( modstrus_trace_example strus_module )
 
 # ------------------------------
 # INSTALLATION
 # ------------------------------
-install( TARGETS modstrus_storage_example
+install( TARGETS modstrus_trace_example
            LIBRARY DESTINATION ${LIB_INSTALL_DIR}/strus/modules
 	   RUNTIME DESTINATION bin )
 

@@ -3,10 +3,11 @@
 #include "strus/weightingFunctionInterface.hpp"
 #include "strus/weightingFunctionInstanceInterface.hpp"
 #include "strus/weightingFunctionContextInterface.hpp"
-#include "strus/arithmeticVariant.hpp"
+#include "strus/numericVariant.hpp"
 #include "strus/storageClientInterface.hpp"
 #include "strus/metaDataReaderInterface.hpp"
 #include "strus/postingIteratorInterface.hpp"
+#include "strus/queryProcessorInterface.hpp"
 #include "strus/errorBufferInterface.hpp"
 #include <sstream>
 #include <iostream>
@@ -53,7 +54,7 @@ public:
 	virtual void addWeightingFeature(
 			const std::string& name_,
 			PostingIteratorInterface* postingIterator_,
-			float /*weight_*/,
+			double /*weight_*/,
 			const TermStatistics& /*stats_*/)
 	{
 		try
@@ -135,7 +136,7 @@ public:
 		CATCH_ERROR_MAP( *m_errhnd, "in add string parameter");
 	}
 
-	virtual void addNumericParameter( const std::string& name, const ArithmeticVariant& value)
+	virtual void addNumericParameter( const std::string& name, const NumericVariant& value)
 	{
 		try
 		{
@@ -146,7 +147,7 @@ public:
 			}
 			else if (name == "cardinality")
 			{
-				if (value.type != ArithmeticVariant::UInt && value.type != ArithmeticVariant::Int)
+				if (value.type != NumericVariant::UInt && value.type != NumericVariant::Int)
 				{
 					throw std::runtime_error("illegal cardinality parameter");
 				}
@@ -201,7 +202,7 @@ public:
 
 	virtual ~MinWinWeightingFunction(){}
 
-	virtual WeightingFunctionInstanceInterface* createInstance() const
+	virtual WeightingFunctionInstanceInterface* createInstance( const QueryProcessorInterface*) const
 	{
 		try
 		{
@@ -210,12 +211,13 @@ public:
 		CATCH_ERROR_MAP_RETURN( *m_errhnd, 0, "in create instance");
 	}
 
-	virtual Description getDescription() const
+	virtual FunctionDescription getDescription() const
 	{
-		Description rt("Calculate the document weight as the inverse of the minimal window size containing a subset of the document features");
-		rt( Description::Param::Feature, "match", "defines the query features to find in a window");
-		rt( Description::Param::Numeric, "maxwinsize", "the maximum size of a window to search for");
-		rt( Description::Param::Numeric, "cardinality", "the number of features to find at least in a window");
+		typedef FunctionDescription::Parameter P;
+		FunctionDescription rt("Calculate the document weight as the inverse of the minimal window size containing a subset of the document features");
+		rt( P::Feature, "match", "defines the query features to find in a window");
+		rt( P::Numeric, "maxwinsize", "the maximum size of a window to search for");
+		rt( P::Numeric, "cardinality", "the number of features to find at least in a window");
 		return rt;
 	}
 

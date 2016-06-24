@@ -3,7 +3,7 @@
 #include "strus/summarizerFunctionInterface.hpp"
 #include "strus/summarizerFunctionInstanceInterface.hpp"
 #include "strus/summarizerFunctionContextInterface.hpp"
-#include "strus/arithmeticVariant.hpp"
+#include "strus/numericVariant.hpp"
 #include "strus/storageClientInterface.hpp"
 #include "strus/metaDataReaderInterface.hpp"
 #include "strus/postingIteratorInterface.hpp"
@@ -64,7 +64,7 @@ public:
 			const std::string& name_,
 			PostingIteratorInterface* postingIterator_,
 			const std::vector<SummarizationVariable>& /*variables_*/,
-			float /*weight_*/,
+			double /*weight_*/,
 			const TermStatistics& /*stats_*/)
 	{
 		try
@@ -173,7 +173,7 @@ public:
 		CATCH_ERROR_MAP( *m_errhnd, "in add string parameter");
 	}
 
-	virtual void addNumericParameter( const std::string& name, const ArithmeticVariant& value)
+	virtual void addNumericParameter( const std::string& name, const NumericVariant& value)
 	{
 		try
 		{
@@ -187,7 +187,7 @@ public:
 			}
 			else if (name == "cardinality")
 			{
-				if (value.type != ArithmeticVariant::UInt && value.type != ArithmeticVariant::Int)
+				if (value.type != NumericVariant::UInt && value.type != NumericVariant::Int)
 				{
 					throw std::runtime_error("illegal cardinality parameter");
 				}
@@ -254,18 +254,15 @@ public:
 		CATCH_ERROR_MAP_RETURN( *m_errhnd, 0, "in create instance");
 	}
 
-	virtual Description getDescription() const
+	virtual FunctionDescription getDescription() const
 	{
-		Description rt("Get the passage of the forward index inside the "
+		typedef FunctionDescription::Parameter P;
+		FunctionDescription rt("Get the passage of the forward index inside the "
 				"minimal window containing a subset of the document features");
-		rt( Description::Param::Feature, "match",
-				"defines the query features to find in a window");
-		rt( Description::Param::Numeric, "maxwinsize",
-				"the maximum size of a window to search for");
-		rt( Description::Param::Numeric, "cardinality",
-				"the number of features to find at least in a window");
-		rt( Description::Param::String, "type",
-				"forward index feature type for building the result");
+		rt( P::Feature, "match", "defines the query features to find in a window");
+		rt( P::Numeric, "maxwinsize", "the maximum size of a window to search for");
+		rt( P::Numeric, "cardinality", "the number of features to find at least in a window");
+		rt( P::String, "type", "forward index feature type for building the result");
 		return rt;
 	}
 
